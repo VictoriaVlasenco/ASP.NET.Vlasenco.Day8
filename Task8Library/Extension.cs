@@ -8,7 +8,7 @@ namespace Task8Library
 {
     public static class Extension
     {
-        public static IMatrix<T> Add<T>(this IMatrix<T> matrix, IMatrix<T> otherMatrix)
+        public static Matrix<T> Add<T>(this Matrix<T> matrix, Matrix<T> otherMatrix)
         {
             T[][] array = new T[matrix.Len][];
             if (otherMatrix == null || matrix.Len != otherMatrix.Len)

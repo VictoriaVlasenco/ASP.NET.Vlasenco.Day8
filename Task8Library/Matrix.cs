@@ -7,39 +7,24 @@ using System.Threading.Tasks;
 
 namespace Task8Library
 {
-    public interface IMatrix<T>
+    public abstract class Matrix<T>
     {
-        int Len { get; }
-        T this[int i, int j] { get; set; }
-        event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
-    }
-
-    public class SquareMatrix<T> : IMatrix<T>
-    {
-        private T[][] matrix;
+        public abstract int Len { get; }
+        public abstract T this[int i, int j] { get; set; }
         public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
-        public SquareMatrix(T[][] array)
-        {
-            IMatrixValidator<T> validator = new SquareMatrixValidator<T>();
-            if (validator.IsValid(array))
-                CreateMatrix(array);
-            else
-                throw new Exception("The matrix is not square");
-        }
 
-        public T this[int i, int j]
+        public bool Equals( Matrix<T> b)
         {
-            get { return matrix[i][j]; }
-            set
+            if (ReferenceEquals(this, null)) return ReferenceEquals(b, null);
+            if (this.GetType() != b.GetType() || this.Len != b.Len) return false;
+            for (int i = 0; i < this.Len; i++)
             {
-                matrix[i][j] = value;
-                OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                for (int j = 0; j < this.Len; j++)
+                {
+                    if (!this[i, j].Equals(b[i, j])) return false;
+                }
             }
-        }
-
-        public int Len
-        {
-            get { return matrix.Length; } 
+            return true;
         }
 
         protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
@@ -50,6 +35,35 @@ namespace Task8Library
             {
                 temp(this, eventArgs);
             }
+        }
+    }
+
+    public class SquareMatrix<T> : Matrix<T>
+    {
+        private T[][] matrix;
+        //public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
+        public SquareMatrix(T[][] array)
+        {
+            IMatrixValidator<T> validator = new SquareMatrixValidator<T>();
+            if (validator.IsValid(array))
+                CreateMatrix(array);
+            else
+                throw new Exception("The matrix is not square");
+        }
+
+        public override T this[int i, int j]
+        {
+            get { return matrix[i][j]; }
+            set
+            {
+                matrix[i][j] = value;
+                OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+            }
+        }
+
+        public override int Len
+        {
+            get { return matrix.Length; } 
         }
 
         private void CreateMatrix(T[][] array)
@@ -63,10 +77,10 @@ namespace Task8Library
         }
     }
 
-    public class SymmetricMatrix<T> : IMatrix<T>
+    public class SymmetricMatrix<T> : Matrix<T>
     {
         private T[][] matrix;
-        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
+        //public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
 
         public SymmetricMatrix(T[][] array)
         {
@@ -77,7 +91,7 @@ namespace Task8Library
                 throw new Exception("The matrix is not symmetric");
         }
 
-        public T this[int i, int j]
+        public override T this[int i, int j]
         {
             get { return matrix[i][j]; }
             set
@@ -98,19 +112,9 @@ namespace Task8Library
             }
         }
 
-        public int Len
+        public override int Len
         {
             get { return matrix.Length; }
-        }
-
-        protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
-        {
-            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
-
-            if (temp != null)
-            {
-                temp(this, eventArgs);
-            }
         }
 
         private void CreateMatrix(T[][] array)
@@ -127,10 +131,9 @@ namespace Task8Library
         }
     }
 
-    public class DiagonalMatrix<T> : IMatrix<T>
+    public class DiagonalMatrix<T> : Matrix<T>
     {
         private T[] matrix;
-        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
 
         public DiagonalMatrix(T[][] array)
         {
@@ -141,7 +144,7 @@ namespace Task8Library
                 throw new Exception("The matrix is not diagonal");
         }
 
-        public T this[int i, int j]
+        public override T this[int i, int j]
         {
             get
             {
@@ -167,19 +170,11 @@ namespace Task8Library
             }
         }
 
-        public int Len
+        public override int Len
         {
             get { return matrix.Length; }
         }
-        protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
-        {
-            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
 
-            if (temp != null)
-            {
-                temp(this, eventArgs);
-            }
-        }
         private void CreateMatrix(T[][] array)
         {
             matrix = new T[array.Length];

@@ -11,9 +11,9 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            IMatrix<int> m = new SquareMatrix<int>(new int[2][] { new int[2] { 1, 2 }, new int[2] { 2, 3 } });
-            IMatrix<int> m1 = new SquareMatrix<int>(new int[2][] { new int[2] { 1, 2 }, new int[2] { 2, 3 } });
-            IMatrix<int> m2 = m.Add(m1);
+            Matrix<int> m = new SquareMatrix<int>(new int[2][] { new int[2] { 1, 2 }, new int[2] { 2, 3 } });
+            Matrix<int> m1 = new SquareMatrix<int>(new int[2][] { new int[2] { 1, 2 }, new int[2] { 2, 3 } });
+            Matrix<int> m2 = m.Add(m1);
 
             m1.ValueChanging += Msg;
             m1[0,0] = 10;
