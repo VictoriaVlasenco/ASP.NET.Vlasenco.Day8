@@ -21,19 +21,4 @@ namespace Task8Library
         public int ColumnNumber { get { return columnNumber; } }
         public T Value {get { return value; }}
     }
-
-    public class ValueChangedMenager<T>
-    {
-        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
-
-        public virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
-        {
-            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
-
-            if (temp != null)
-            {
-                temp(this, eventArgs);
-            }
-        }
-    }
 }

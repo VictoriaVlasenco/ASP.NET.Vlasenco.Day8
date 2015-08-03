@@ -11,12 +11,13 @@ namespace Task8Library
     {
         int Len { get; }
         T this[int i, int j] { get; set; }
+        event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
     }
 
     public class SquareMatrix<T> : IMatrix<T>
     {
         private T[][] matrix;
-        private ValueChangedMenager<T> evenMenager = new ValueChangedMenager<T>(); 
+        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
         public SquareMatrix(T[][] array)
         {
             IMatrixValidator<T> validator = new SquareMatrixValidator<T>();
@@ -32,13 +33,23 @@ namespace Task8Library
             set
             {
                 matrix[i][j] = value;
-                evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
             }
         }
 
         public int Len
         {
             get { return matrix.Length; } 
+        }
+
+        protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
+        {
+            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
+
+            if (temp != null)
+            {
+                temp(this, eventArgs);
+            }
         }
 
         private void CreateMatrix(T[][] array)
@@ -55,7 +66,7 @@ namespace Task8Library
     public class SymmetricMatrix<T> : IMatrix<T>
     {
         private T[][] matrix;
-        private ValueChangedMenager<T> evenMenager = new ValueChangedMenager<T>(); 
+        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
 
         public SymmetricMatrix(T[][] array)
         {
@@ -74,15 +85,15 @@ namespace Task8Library
                 if (i == j)
                 {
                     matrix[i][j] = value;
-                    evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                    OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
 
                 }
                 else
                 {
                     matrix[i][j] = value;
-                    evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                    OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
                     matrix[j][i] = value;
-                    evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(j, i, value));
+                    OnValueChanging(new ValueChangedEventArgs<T>(j, i, value));
                 }
             }
         }
@@ -90,6 +101,16 @@ namespace Task8Library
         public int Len
         {
             get { return matrix.Length; }
+        }
+
+        protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
+        {
+            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
+
+            if (temp != null)
+            {
+                temp(this, eventArgs);
+            }
         }
 
         private void CreateMatrix(T[][] array)
@@ -109,7 +130,7 @@ namespace Task8Library
     public class DiagonalMatrix<T> : IMatrix<T>
     {
         private T[] matrix;
-        private ValueChangedMenager<T> evenMenager = new ValueChangedMenager<T>(); 
+        public event EventHandler<ValueChangedEventArgs<T>> ValueChanging;
 
         public DiagonalMatrix(T[][] array)
         {
@@ -135,13 +156,13 @@ namespace Task8Library
                 if (i == j)
                 {
                     matrix[i] = value;
-                    evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                    OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
                 }
                 else
                 {
                     if (!value.Equals(default(T)))
                         throw new ArgumentException("The value changes matrix to nondiagonal.");
-                    evenMenager.OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
+                    OnValueChanging(new ValueChangedEventArgs<T>(i, j, value));
                 }
             }
         }
@@ -150,7 +171,15 @@ namespace Task8Library
         {
             get { return matrix.Length; }
         }
+        protected virtual void OnValueChanging(ValueChangedEventArgs<T> eventArgs)
+        {
+            EventHandler<ValueChangedEventArgs<T>> temp = ValueChanging;
 
+            if (temp != null)
+            {
+                temp(this, eventArgs);
+            }
+        }
         private void CreateMatrix(T[][] array)
         {
             matrix = new T[array.Length];
